@@ -7,6 +7,7 @@ function main () {
         file="./docker-compose.yaml"
     else
         file="$1"
+    fi
 
     directory=$(dirname "$file")
 
