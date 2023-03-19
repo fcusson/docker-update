@@ -2,15 +2,21 @@
 
 function main () {
 
-    directory=$(dirname "$1")
 
-    if [ ! -f $1 ]; then
-        echo "$1 does not exist"
+    if [ $# -eq 0 ]; then
+        file="./docker-compose.yaml"
+    else
+        file="$1"
+
+    directory=$(dirname "$file")
+
+    if [ ! -f $file ]; then
+        echo "$file does not exist"
         exit 1
     fi
 
-    if [[ "$1" != *"docker-compose.yaml"  ]] && [[ "$1" != *"docker-compose.yml" ]]; then
-        echo "$1 is not a docker file"
+    if [[ "$file" != *"docker-compose.yaml"  ]] && [[ "$file" != *"docker-compose.yml" ]]; then
+        echo "$file is not a docker file"
         exit 1
     fi
 
@@ -23,18 +29,18 @@ function main () {
     service_name=$(cat "${directory}/service_name")
 
     # pull the new image
-    docker-compose -f $1 pull
+    docker-compose -f $file pull
 
     # stop service
     systemctl stop "${service_name}"
 
     # remove container
-    docker-compose -f $1 rm --force
+    docker-compose -f $file rm --force
 
     # reactivate container
-    docker-compose -f $1 up -d
+    docker-compose -f $file up -d
     sleep 5
-    docker-compose -f $1 stop
+    docker-compose -f $file stop
 
     # start service
     systemctl start ${service_name}
